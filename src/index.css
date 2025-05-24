@@ -8,3 +8,25 @@ body {
 }
 
 
+@keyframes blinkFocus {
+  0% {
+    box-shadow: 0 0 0px 2px #4A90E2;
+  transform:scale(1)
+  }
+  50% {
+    box-shadow: 0 0 8px 4px #4A90E2;
+  transform:scale(1.2)
+  }
+  100% {
+    box-shadow: 0 0 0px 2px #4A90E2;
+  transform:scale(1)
+  }
+}
+
+.active {
+  animation: blinkFocus 2s infinite;
+  animation-fill-mode: both;
+  transition: box-shadow 0.3s;
+}
+
+

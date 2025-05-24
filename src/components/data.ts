@@ -48,6 +48,34 @@ export async function fetchProblems(cid: string): Promise<any> {
   return data
 }
 
+/**
+ */
+export async function fetchSubs(cid: string): Promise<any> {
+  const { data } = await axiosInstance.get<any>(
+    `/contests/${cid}/submissions`
+  )
+  return data
+}
+
+/**
+ */
+export async function fetchJudge(cid: string): Promise<any> {
+  const { data } = await axiosInstance.get<any>(
+    `/contests/${cid}/judgements`
+  )
+  return data
+}
+
+/**
+ */
+export async function fetchJudgeTypes(cid: string): Promise<any> {
+  const { data } = await axiosInstance.get<any>(
+    `/contests/${cid}/judgement-types`
+  )
+  return data
+}
+
+
 /** 🧩 Example usage in your React component or wherever */
 export async function loadContestData(cid: string) {
   const contestApi = await fetchContest(cid);
@@ -55,6 +83,10 @@ export async function loadContestData(cid: string) {
   const afterApi   = await fetchAfter(cid);
   const teamsApi   = await fetchTeams(cid);
   const problemsApi   = await fetchProblems(cid);
-  return { contestApi , beforeApi, afterApi , teamsApi , problemsApi};
+  const subsApi   = await fetchSubs(cid);
+  const judgeApi   = await fetchJudge(cid);
+  const judgeTypesApi   = await fetchJudgeTypes(cid);
+
+  return { contestApi , beforeApi, afterApi , teamsApi , problemsApi , subsApi , judgeApi , judgeTypesApi};
 }
 

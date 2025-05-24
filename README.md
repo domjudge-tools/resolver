@@ -52,3 +52,7 @@ export default tseslint.config({
   },
 })
 ```
+
+### TODO
+- [ ] Add preview
+- [ ] Add  themes
