@@ -55,4 +55,7 @@ export default tseslint.config({
 
 ### TODO
 - [ ] Add preview
-- [ ] Add  themes
+- [x] Add  themes
+- [ ] Add static version
+- [ ] Responsive design
+- [ ] Handle the judging types 
