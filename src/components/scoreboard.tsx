@@ -183,7 +183,7 @@ useEffect(() => {
   {problems?.map((problem : any, i : number) => (
     <div key={problem.id} className="relative flex justify-center items-center">
       <div
-        className="w-12 h-12 rounded-full  text-white text-xl font-bold flex items-center justify-center shadow"
+        className="w-12 h-12 rounded-full  text-black text-xl font-bold flex items-center justify-center shadow"
         style={{ backgroundColor: problem.rgb || '#888' }}
       >
         {problem.label || String.fromCharCode(65 + i)}
