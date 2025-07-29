@@ -42,9 +42,28 @@ export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
     return a.score.total_time - b.score.total_time;
   });
 
-  teams.forEach((team, idx) => {
-    team.rank = idx + 1;
-  });
+//  teams.forEach((team, idx) => {
+//    team.rank = idx + 1;
+//  });
+
+  // set the ranking process
+    let lastSolved = -1;
+    let lastTime = -1;
+    let lastRank = 0;
+    let skip = 0;
+     teams.map((team, index) => {
+      if (team.score.num_solved === lastSolved && team.score.total_time === lastTime) {
+        skip++;
+        team.rank = lastRank; 
+      } else {
+        lastRank = index + 1;
+        lastSolved = team.score.num_solved;
+        lastTime = team.score.total_time;
+        lastRank += skip;
+        skip = 0;
+        return team.rank =  lastRank;
+      }
+    });
 
   return teams;
 }
