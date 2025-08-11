@@ -54,7 +54,7 @@ export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
      teams.map((team, index) => {
       if (team.score.num_solved === lastSolved && team.score.total_time === lastTime) {
         skip++;
-        team.rank = lastRank; 
+        team.rank = null; 
       } else {
         lastRank = index + 1;
         lastSolved = team.score.num_solved;
@@ -171,7 +171,7 @@ useEffect(() => {
   };
 
     const getNameTeam = (team_id : number | string)=> { 
-    const team = teams?.find((tm:any) => tm.id == team_id || tm.lable == team_id);
+    const team = teams?.find((tm:{id : number  , table : number}) => tm.id == team_id || tm.lable == team_id);
     if (team?.hidden) return
     return team.name
     }
@@ -187,7 +187,7 @@ useEffect(() => {
     <div className="p-4 w-full ">
       <div className="overflow-auto">
         <div className="min-w-[1024px]">
-          <div className="grid grid-cols-[50px_25rem_80px_80px_1fr_80px] text-xl font-bold bg-blue-700 text-white p-2 rounded-t">
+          <div className="grid grid-cols-[50px_25rem_80px_80px_1fr_80px] gap-2 text-xl font-bold bg-blue-700 text-white p-2 rounded-t">
             <div className="text-start grid place-items-center">Rank</div>
             <div className="text-start flex items-center ">Name</div>
             <div className="text-center grid place-items-center">Solved</div>
@@ -218,13 +218,22 @@ useEffect(() => {
             {!loading  &&
               result?.map((team, index) => (
                 <motion.div
-                  layout="position"
-                  key={team.team_id}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 1 }}
-                  className={`team-${team.team_id} grid odd:[&>.group-cell>.cell]:shadow  justify-center grid-cols-[50px_25rem_80px_80px_1fr_80px] p-2 ${
+                  layout
+                  layoutId={`team-row-${team.team_id}`} // unique per team
+                  transition={{
+  layout: {
+    duration: 1.1,
+    ease: [0.25, 0.8, 0.25, 1], // ease-in-out
+  },
+  opacity: {
+    duration: 0.3,
+  },
+}}                key={team.team_id}
+                  initial={{ opacity: 0, y : -10 }}
+                  animate={{ opacity: 1, y : 0 }}
+                  exit={{ opacity: 0, y : 10 }}
+                  style={{ zIndex: result.length - index }}
+                  className={`team-${team.team_id} gap-2 [&:has(&>*.active)]:z-50 relative grid odd:[&>.group-cell>.cell]:shadow  justify-center grid-cols-[50px_25rem_80px_80px_1fr_80px] p-2 ${
                     index % 2 === 0 ? 'bg-neutral-200' : 'bg-white'
                   }`}
                 >
@@ -240,7 +249,14 @@ useEffect(() => {
                   {team.problems.map(pr => (
                     <div
                       key={pr.problem_id}
-                      onClick={() => update(pr.problem_id, team.team_id, pr.num_pending)}
+                      onClick={() => {
+                          // prevent to not changing the view port
+                     const scrollTop = window.scrollY;
+                     update(pr.problem_id, team.team_id, pr.num_pending)
+                     requestAnimationFrame(() => {
+                     window.scrollTo({ top: scrollTop });
+              });
+                      }}
                       id={`team-${team.team_id}-${pr.problem_id}`}
                       className={`relative grid place-items-center text-center cell font-bold text-xl ${pr.num_pending > 0 ? "cursor-pointer" : ""} transition-all rounded ${getCellColor(pr)} p-1 ${pr.first_to_solve ? "bg-green-800 text-white" : ""}`}
                     >
@@ -248,7 +264,7 @@ useEffect(() => {
                       {pr.first_to_solve && (
                         <span className="absolute -top-1 -right-1 text-xl">🎉</span>
                       )}
-                      <div className="text-[10px] flex items-center justify-center gap-1">
+                      <div className="text-[12px]  flex items-center justify-center gap-1">
                         <span>
                           {pr.num_judged > 0
                             ? `${pr.num_judged} ${pr.num_judged === 1 ? 'try' : 'tries'}`

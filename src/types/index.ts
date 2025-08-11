@@ -29,7 +29,7 @@ export interface ProblemInfo {
 
 /** One row of the public scoreboard */
 export interface ScoreboardRow {
-  rank: number
+  rank: number | null
   team_id: string
   score: {
     num_solved: number
