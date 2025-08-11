@@ -66,5 +66,7 @@ export default tseslint.config({
 - [ ] Add static version
 - [ ] Responsive design
 - [ ] Handle the judging types
-- [ ] dynamic the reanking number
-- [ ] fix the animation
+- [x] dynamic the reanking number
+- [x] fix the animation
+- [ ] Add example of .env file
+- [ ] Write little docuemnt for how this work and how to config that!
