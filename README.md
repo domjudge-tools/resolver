@@ -64,9 +64,12 @@ export default tseslint.config({
 - [x] Add themes
 - [ ] Add preview
 - [ ] Add static version
-- [ ] Responsive design
-- [ ] Handle the judging types
+- [ ] Responsive design(if we deploy in backend service and share with others)
+- [x] Handle the judging types
 - [x] dynamic the reanking number
 - [x] fix the animation
 - [ ] Add example of .env file
 - [ ] Write little docuemnt for how this work and how to config that!
+- [ ] Handle the keyboard next controling(example n) 
+- [ ] Add document for functions in scorboard component 
+- [ ] Refactor the scoreboard component
