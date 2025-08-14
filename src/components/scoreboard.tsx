@@ -72,6 +72,7 @@ export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
 
 
 export default function Scoreboard({ contestId }: ScoreboardProps) {
+  const [before, setBefore] = useState<ScoreboardData | null>(null);
   const [after, setAfter] = useState<ScoreboardData | null>(null);
   const [result, setResult] = useState<ScoreboardRow[] | null>(null);
   const [teams , setTeams] = useState(null)
@@ -87,12 +88,13 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
   useEffect(() => {
     loadContestData(contestId).then((data: any) => {
       setResult(sortAndRankTeams(data.beforeApi.rows));
+      setBefore(data.beforeApi.rows);
       setAfter(data.afterApi);
       setTeams(data.teamsApi)
       setProblems(data.problemsApi)
       setJudgeTypes(data.judgeTypesApi)
       setJudges(data.judgeApi)
-      setSubs(data.subs)
+      setSubs(data.subsApi)
     }).finally(()=> {
     setLoading(false)
   })}, []);
@@ -114,35 +116,35 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
     const problemAfter = updatedTeam.problems.find(p => p.problem_id === prId);
     if (!problemAfter) return;
 
-    const newResult = result!.map(team => {
-      if (team.team_id !== teamId) return team;
+        const newResult = result!.map(team => {
+          if (team.team_id !== teamId) return team;
 
-      //const existingProblem = team.problems.find(p => p.problem_id === prId);
-      const updatedProblems = team.problems.map(p =>
-        p.problem_id === prId ? problemAfter : p
-      );
+          //const existingProblem = team.problems.find(p => p.problem_id === prId);
+          const updatedProblems = team.problems.map(p =>
+            p.problem_id === prId ? problemAfter : p
+          );
 
-      // Recalculate total_time and num_solved for this team
-      let newTotalTime = 0;
-      let newNumSolved = 0;
+          // Recalculate total_time and num_solved for this team
+          let newTotalTime = 0;
+          let newNumSolved = 0;
 
-      updatedProblems.forEach(p => {
-        if (p.solved) {
-          const penalty = api_penalty * (p.num_judged - 1);
-          newTotalTime += p.time + penalty;
-          newNumSolved++;
-        }
-      });
+          updatedProblems.forEach(p => {
+            if (p.solved) {
+              const penalty = api_penalty * (p.num_judged - 1);
+              newTotalTime += p.time + penalty;
+              newNumSolved++;
+            }
+          });
 
-      return {
-        ...team,
-        problems: updatedProblems,
-        score: {
-          total_time: newTotalTime,
-          num_solved: newNumSolved,
-        },
-      };
-    });
+          return {
+            ...team,
+            problems: updatedProblems,
+            score: {
+              total_time: newTotalTime,
+              num_solved: newNumSolved,
+            },
+          };
+        });
 
     setResult(sortAndRankTeams(newResult));
     document.getElementById(`team-${teamId}-${prId}`)?.classList.remove("active");
@@ -163,12 +165,26 @@ useEffect(() => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [setrCoolDown]);
-  const getCellColor = (pr: ProblemInfo) => {
-    if (pr.num_pending > 0 ) return 'bg-yellow-300';
-    if (pr.solved) return 'bg-green-300';
-    if (pr.num_judged > 0) return 'bg-red-400';
+
+    const getCellColor = (pr: ProblemInfo , team_id:string) => {
+      if (pr.num_pending > 0 ) return 'bg-yellow-300';
+      if (pr.solved) return 'bg-green-300';
+      if (pr.num_judged > 0) return 'bg-red-400';
+
+          // Handle special case: team had a pending submission in the previous state,
+          // but now the judged result has no penalty (e.g., compile error, too late submission, etc.).
+          // We still want to highlight it (in light red) because it was previously shown as pending.
+      const prIsPend = before
+          ?.find((row) => row.team_id == team_id)
+          ?.problems?.find(p => p.problem_id == pr.problem_id);
+
+      if (pr.num_judged === 0  && prIsPend.num_pending > 0) {
+          const totalSubs = subs?.filter((sub) => sub.team_id == team_id && sub.problem_id == pr.problem_id)
+          if (totalSubs.length > 0 ) return 'bg-red-300';
+      }
+
     return 'bg-gray-100';
-  };
+    };
 
     const getNameTeam = (team_id : number | string)=> { 
     const team = teams?.find((tm:{id : number  , table : number}) => tm.id == team_id || tm.lable == team_id);
@@ -258,7 +274,7 @@ useEffect(() => {
               });
                       }}
                       id={`team-${team.team_id}-${pr.problem_id}`}
-                      className={`relative grid place-items-center text-center cell font-bold text-xl ${pr.num_pending > 0 ? "cursor-pointer" : ""} transition-all rounded ${getCellColor(pr)} p-1 ${pr.first_to_solve ? "bg-green-800 text-white" : ""}`}
+                      className={`relative grid place-items-center text-center cell font-bold text-xl ${pr.num_pending > 0 ? "cursor-pointer" : ""} transition-all rounded ${getCellColor(pr,team.team_id)} p-1 ${pr.first_to_solve ? "bg-green-800 text-white" : ""}`}
                     >
                       {pr.solved ? `${pr.time}` : '0'}
                       {pr.first_to_solve && (
