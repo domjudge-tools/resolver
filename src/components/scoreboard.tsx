@@ -183,7 +183,7 @@ useEffect(() => {
           if (totalSubs.length > 0 ) return 'bg-red-300';
       }
 
-    return 'bg-gray-100';
+    return '';
     };
 
     const getNameTeam = (team_id : number | string)=> { 
@@ -200,25 +200,26 @@ useEffect(() => {
 
 
   return (
-    <div className="p-4 w-full ">
-      <div className="overflow-auto">
+    <div className="p-4 w-full">
+      <div className="overflow-auto shadow-lg shadow-slate-200 rounded-lg">
         <div className="min-w-[1024px]">
-          <div className="grid grid-cols-[50px_25rem_80px_80px_1fr_80px] gap-2 text-xl font-bold bg-blue-700 text-white p-2 rounded-t">
-            <div className="text-start grid place-items-center">Rank</div>
-            <div className="text-start flex items-center ">Name</div>
-            <div className="text-center grid place-items-center">Solved</div>
-            <div className="text-center grid place-items-center">Time</div>
+          <div className="grid shadow-sm grid-cols-[50px_25rem_10rem_1fr_5rem] min-h-10 place-items-stretch gap-2 px-2 text-lg font-bold bg-gray-100 text-slate-700">
+            <div className="text-start grid place-items-center">RANK</div>
+            <div className="text-start flex justify-center items-center">TEAM</div>
+            <div className="text-center m-auto "><span className="text-teal-900">SOLVED</span> / <span className="text-rose-900">TIME</span></div>
+            {//<div className="text-center grid place-items-center">TIME</div>
+            }
           
 <div
   style={{
     gridTemplateColumns: `repeat(${problems?.length || 4}, 1fr)`
   }}
-  className="grid items-center text-white gap-3 justify-center min-w-[30px]"
+  className="grid  text-white gap-3 justify-center min-w-[30px]"
 >
   {problems?.map((problem : any, i : number) => (
     <div key={problem.id} className="relative flex justify-center items-center">
       <div
-        className="w-12 h-12 rounded-full  text-black text-xl font-bold flex items-center justify-center shadow"
+        className="w-full h-full text-slate-900 text-xl font-bold text-center rounded-lg grid place-items-center"
         style={{ backgroundColor: problem.rgb || '#888' }}
       >
         {problem.label || String.fromCharCode(65 + i)}
@@ -226,8 +227,7 @@ useEffect(() => {
           </div>
   ))}
 </div>
-
-            <div>Solv Attm</div>
+            <div className="text-center grid place-items-center">SOLV ATTM</div>
           </div>
 
           <AnimatePresence>
@@ -249,19 +249,19 @@ useEffect(() => {
                   animate={{ opacity: 1, y : 0 }}
                   exit={{ opacity: 0, y : 10 }}
                   style={{ zIndex: result.length - index }}
-                  className={`team-${team.team_id} gap-2 [&:has(&>*.active)]:z-50 relative grid odd:[&>.group-cell>.cell]:shadow  justify-center grid-cols-[50px_25rem_80px_80px_1fr_80px] p-2 ${
-                    index % 2 === 0 ? 'bg-neutral-200' : 'bg-white'
-                  }`}
+                  className={`team-${team.team_id} border-b-2 border-gray-100 gap-2
+                    [&:has(&>*.active)]:z-50 relative grid px-2 py-1 justify-center grid-cols-[50px_25rem_10rem_1fr_5rem]`}
                 >
-                  <div className="font-bold text-[2rem]">{team.rank}</div>
-                  <div className="flex flex-col">
-                    <span className="font-bold text-[2rem]">{getNameTeam(team.team_id)}</span>
-                    <span className="text-2xl min-h-[1rem] text-gray-500 font-bold">{getUniTeam(team.team_id)}</span>
+                  <div className="font-bod grid place-items-center text-2xl">{team.rank}</div>
+                  <div className="flex flex-col justify-center">
+                    <span className="font-bold text-3xl">{getNameTeam(team.team_id)}</span>
+                    <span className="text-xl min-h-[1rem] text-gray-500 font-bold">{getUniTeam(team.team_id)}</span>
                   </div>
-                  <div className="text-center text-xl self-center font-bold">{team.score.num_solved}</div>
-                  <div className="text-center text-xl font-bold self-center">{team.score.total_time}</div>
+                  <div className="text-center text-xl self-center font-bold"><span className="text-teal-900">{team.score.num_solved}</span> / <span className="text-rose-900">{team.score.total_time}</span></div>
+                  {//<div className="text-center text-xl font-bold self-center">{team.score.total_time}</div>
+                  }
                 <div style={{ gridTemplateColumns : `repeat(${problems?.length || 4},1fr)` }}
-                  className="grid  gap-5 justify-start group-cell">
+                  className="grid gap-3 group-cell">
                   {team.problems.map(pr => (
                     <div
                       key={pr.problem_id}
@@ -274,19 +274,19 @@ useEffect(() => {
               });
                       }}
                       id={`team-${team.team_id}-${pr.problem_id}`}
-                      className={`relative grid place-items-center text-center cell font-bold text-xl ${pr.num_pending > 0 ? "cursor-pointer" : ""} transition-all rounded ${getCellColor(pr,team.team_id)} p-1 ${pr.first_to_solve ? "bg-green-800 text-white" : ""}`}
+                      className={`relative grid py-3 place-items-center rounded-lg text-center cell font-bold text-2xl ${pr.num_pending > 0 ? "cursor-pointer" : ""} transition-all rounded ${getCellColor(pr,team.team_id)} p-1 ${pr.first_to_solve ? "bg-green-800 text-white" : ""}`}
                     >
-                      {pr.solved ? `${pr.time}` : '0'}
+                      {pr.solved ? `${pr.time}` : ''}
                       {pr.first_to_solve && (
-                        <span className="absolute -top-1 -right-1 text-xl">🎉</span>
+                        <span className="absolute -top-2 -right-2 text-2xl">🎉</span>
                       )}
-                      <div className="text-[12px]  flex items-center justify-center gap-1">
+                      <div className="text-[1rem] flex items-center font-normal justify-center gap-1">
                         <span>
                           {pr.num_judged > 0
                             ? `${pr.num_judged} ${pr.num_judged === 1 ? 'try' : 'tries'}`
                             : pr.num_pending > 0
                             ? '0'
-                            : '-'}
+                            : ''}
                         </span>
                         <span>{pr.num_pending > 0 ? `+ ${pr.num_pending}` : ''}</span>
                       </div>
