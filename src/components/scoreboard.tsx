@@ -50,17 +50,15 @@ export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
     let lastSolved = -1;
     let lastTime = -1;
     let lastRank = 0;
-    let skip = 0;
+    let num = 1;
      teams.map((team, index) => {
       if (team.score.num_solved === lastSolved && team.score.total_time === lastTime) {
-        skip++;
-        team.rank = null; 
+        return team.rank = null; 
       } else {
-        lastRank = index + 1;
+        lastRank = num;
         lastSolved = team.score.num_solved;
         lastTime = team.score.total_time;
-        lastRank += skip;
-        skip = 0;
+        num++;
         return team.rank =  lastRank;
       }
     });
@@ -75,6 +73,7 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
   const [before, setBefore] = useState<ScoreboardData | null>(null);
   const [after, setAfter] = useState<ScoreboardData | null>(null);
   const [result, setResult] = useState<ScoreboardRow[] | null>(null);
+  const [contestData, setContestData] = useState(null);
   const [teams , setTeams] = useState(null)
   const [problems , setProblems] = useState(null)
   const [loading , setLoading] = useState(true)
@@ -88,6 +87,7 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
   useEffect(() => {
     loadContestData(contestId).then((data: any) => {
       setResult(sortAndRankTeams(data.beforeApi.rows));
+      setContestData(data?.contestApi);
       setBefore(data.beforeApi.rows);
       setAfter(data.afterApi);
       setTeams(data.teamsApi)
@@ -201,6 +201,7 @@ useEffect(() => {
 
   return (
     <div className="p-4 w-full">
+    <h1 className="title-font text-indigo-700 text-4xl">{contestData?.name}</h1>
       <div className="overflow-auto shadow-lg shadow-slate-200 rounded-lg">
         <div className="min-w-[1024px]">
           <div className="grid shadow-sm grid-cols-[50px_25rem_10rem_1fr_5rem] min-h-10 place-items-stretch gap-2 px-2 text-lg font-bold bg-gray-100 text-slate-700">
