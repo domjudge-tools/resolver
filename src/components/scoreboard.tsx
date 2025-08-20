@@ -36,28 +36,34 @@ export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
 
   // Sort and assign ranks
   teams.sort((a, b) => {
-    if (b.score.num_solved !== a.score.num_solved) {
-      return b.score.num_solved - a.score.num_solved;
-    }
-    return a.score.total_time - b.score.total_time;
-  });
+    if (b.score.num_solved !== a.score.num_solved) 
+     return b.score.num_solved - a.score.num_solved;
+    if (a.score.total_time !== b.score.total_time)
+     return a.score.total_time - b.score.total_time;
 
-//  teams.forEach((team, idx) => {
-//    team.rank = idx + 1;
-//  });
+   //If two teams have the same score, they are sorted by the time of their last accepted submission
+    const aTime = Math.max(...a?.problems?.filter(pr => pr?.time)?.map(t => t?.time)) 
+    const bTime = Math.max(...b?.problems?.filter(pr => pr?.time)?.map(t => t?.time))
+    return aTime - bTime; 
+    
+  });
 
   // set the ranking process
     let lastSolved = -1;
     let lastTime = -1;
     let lastRank = 0;
+    let lastMaxSubTime = -Infinity;
     let num = 1;
-     teams.map((team, index) => {
-      if (team.score.num_solved === lastSolved && team.score.total_time === lastTime) {
+     teams.map(team => {
+         // same here check the last accepted submission for show the rank
+         const maxSubTime = Math.max(...team?.problems?.filter(pr => pr?.time)?.map(t => t?.time));
+      if (team.score.num_solved === lastSolved && team.score.total_time === lastTime && lastMaxSubTime === maxSubTime) {
         return team.rank = null; 
       } else {
         lastRank = num;
         lastSolved = team.score.num_solved;
         lastTime = team.score.total_time;
+        lastMaxSubTime = maxSubTime;
         num++;
         return team.rank =  lastRank;
       }

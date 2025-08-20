@@ -16,6 +16,7 @@ Currently, two official plugins are available:
 
 ### TODO
 
+- [x] Hotfix the sorting rank //If two teams have the same score, they are sorted by the time of their last accepted submission.
 - [x] Add themes
 - [ ] Add preview
 - [ ] Add static version
