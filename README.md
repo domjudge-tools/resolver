@@ -39,6 +39,7 @@ bun install
 copy The .env.example to .env:
 > [!NOTE]
 > You CAN SEE THE EXAMPLE IN FILE.
+
 | Variable              | Description                                                                                              |
 | --------------------- | -------------------------------------------------------------------------------------------------------- |
 | **VITE_API_BASE_URL** | The base URL of your proxied DOMjudge API.                               |
