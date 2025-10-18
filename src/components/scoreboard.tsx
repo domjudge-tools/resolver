@@ -36,16 +36,16 @@ export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
 
   // Sort and assign ranks
   teams.sort((a, b) => {
-    if (b.score.num_solved !== a.score.num_solved) 
+    if (b.score.num_solved !== a.score.num_solved)
      return b.score.num_solved - a.score.num_solved;
     if (a.score.total_time !== b.score.total_time)
      return a.score.total_time - b.score.total_time;
 
    //If two teams have the same score, they are sorted by the time of their last accepted submission
-    const aTime = Math.max(...a?.problems?.filter(pr => pr?.time)?.map(t => t?.time)) 
+    const aTime = Math.max(...a?.problems?.filter(pr => pr?.time)?.map(t => t?.time))
     const bTime = Math.max(...b?.problems?.filter(pr => pr?.time)?.map(t => t?.time))
-    return aTime - bTime; 
-    
+    return aTime - bTime;
+
   });
 
   // set the ranking process
@@ -58,7 +58,7 @@ export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
          // same here check the last accepted submission for show the rank
          const maxSubTime = Math.max(...team?.problems?.filter(pr => pr?.time)?.map(t => t?.time));
       if (team.score.num_solved === lastSolved && team.score.total_time === lastTime && lastMaxSubTime === maxSubTime) {
-        return team.rank = null; 
+        return team.rank = null;
       } else {
         lastRank = num;
         lastSolved = team.score.num_solved;
@@ -192,13 +192,13 @@ useEffect(() => {
     return '';
     };
 
-    const getNameTeam = (team_id : number | string)=> { 
+    const getNameTeam = (team_id : number | string)=> {
     const team = teams?.find((tm:{id : number  , table : number}) => tm.id == team_id || tm.lable == team_id);
     if (team?.hidden) return
     return team.name
     }
 
-    const getUniTeam = (team_id : number | string)=> { 
+    const getUniTeam = (team_id : number | string)=> {
     const team = teams?.find((tm:any) => tm.id == team_id || tm.lable == team_id);
     if (team?.hidden) return
     return team.affiliation
@@ -216,7 +216,7 @@ useEffect(() => {
             <div className="text-center m-auto "><span className="text-teal-900">SOLVED</span> / <span className="text-rose-900">TIME</span></div>
             {//<div className="text-center grid place-items-center">TIME</div>
             }
-          
+
 <div
   style={{
     gridTemplateColumns: `repeat(${problems?.length || 4}, 1fr)`
@@ -256,7 +256,7 @@ useEffect(() => {
                   animate={{ opacity: 1, y : 0 }}
                   exit={{ opacity: 0, y : 10 }}
                   style={{ zIndex: result.length - index }}
-                  className={`team-${team.team_id} border-b-2 border-gray-100 gap-2
+                  className={`team-${team.team_id} bg-white border-b-2 border-gray-100 gap-2
                     [&:has(&>*.active)]:z-50 relative grid px-2 py-1 justify-center grid-cols-[50px_25rem_10rem_1fr_5rem]`}
                 >
                   <div className="font-bod grid place-items-center text-2xl">{team.rank}</div>
@@ -313,4 +313,3 @@ useEffect(() => {
     </div>
   );
 }
-

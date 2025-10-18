@@ -6,9 +6,10 @@
 
 
 
-body { 
+body {
   font-family: "Vazirmatn" , "Ubuntu", sans-serif;
   font-size : 62%;
+  background-color: #F9F5F0;
 }
 
 .title-font {
@@ -34,4 +35,3 @@ body {
 .active {
   animation: blinkFocus 1.5s ease-in-out infinite;
 }
-
