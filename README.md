@@ -28,20 +28,17 @@ React + TypeScript + Vite + bun
 
 ### Install the package with bun :
 
-`
-bun install
-`
-<br>
-`bun start
-`
-
-## If you want run with pnpm or npm :
+```bash
+bun install && bun start
 ```
+
+### If you want run with pnpm or npm :
+```bash
 pnpm install
 node cors-proxy.js &
 pnpm run dev
 ```
-```
+```bash
 npm install
 node cors-proxy.js &
 npm run dev
@@ -67,6 +64,18 @@ Browsers block API requests to different origins (domains or ports) by default b
 To bypass this safely during development, we use a CORS proxy server powered by cors-anywhere
 
 `You should use node to run the cors-proxy file then run the project`
-```node cors-proxy.js
+```
+node cors-proxy.js
+```
 
 
+### If for any reason you don't want to use the proxy you can run chrome or other browser without web-security : 
+
+For chrome :
+```bash
+mkdir chromeCashe
+cd chromeCashe
+google-chrome-stable --user-data-dir="./" --disable-web-security
+```
+
+For the firefox : About:config and the security.fileuri.strict_origin_policy. Sometimes also the network.http.refere.XOriginPolicy. Im not sure:))
