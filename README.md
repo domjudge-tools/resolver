@@ -35,6 +35,19 @@ bun install
 `bun start
 `
 
+## If you want run with pnpm or npm :
+```
+pnpm install
+node cors-proxy.js &
+pnpm run dev
+```
+```
+npm install
+node cors-proxy.js &
+npm run dev
+```
+
+
 ### env file : 
 copy The .env.example to .env:
 > [!NOTE]
@@ -47,4 +60,13 @@ copy The .env.example to .env:
 | **VITE_API_PASSWORD** | Password for the API user.                                                                               |
 | **VITE_API_CID**      | Contest ID to pull data from. Must match the contest ID in DOMjudge.                                     |
 | **VITE_API_PENALTY**  | Penalty time (in minutes) applied per wrong submission.                                                  |
+
+<hr>
+
+Browsers block API requests to different origins (domains or ports) by default because of CORS (Cross-Origin Resource Sharing) restrictions.
+To bypass this safely during development, we use a CORS proxy server powered by cors-anywhere
+
+`You should use node to run the cors-proxy file then run the project`
+```node cors-proxy.js
+
 

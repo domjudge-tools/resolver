@@ -6,8 +6,8 @@
   "scripts": {
     "start": "bunx concurrently 'bun run cors' 'bun run dev'",
     "dev": "vite",
-    "cors": "bun run bun-cors-proxy.js",
-    "build": "tsc -b && vite build",
+    "cors": "bun run cors-proxy.js",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@types/node": "^24.9.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
