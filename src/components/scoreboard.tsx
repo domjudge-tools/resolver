@@ -204,6 +204,28 @@ useEffect(() => {
     return team.affiliation
   }
 
+// addEventlistnere for keyboard to show the resolve of submits (right to left)
+  useEffect(() => {
+    function keyDownHandler(e: globalThis.KeyboardEvent) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+       const pendings = document.getElementsByClassName("cursor-pointer");
+       if (!pendings) return
+       const lastPend = pendings[pendings.length -1 ];
+       lastPend?.scrollIntoView({
+        behavior: "smooth"
+      });
+       lastPend?.click()
+      }
+    }
+    document.addEventListener("keydown", keyDownHandler);
+    return () => {
+      document.removeEventListener("keydown", keyDownHandler);
+    };
+
+  }, []);
+
+
 
   return (
     <div className="p-4 w-full">
