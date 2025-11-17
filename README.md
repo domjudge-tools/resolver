@@ -4,28 +4,28 @@
 
 <hr>
 
-React + TypeScript + Vite + bun
+## Features & TODO
+### Completed
+- React + TypeScript + Vite + bun
+- **Correct ranking logic**  
+  If two teams have equal scores → resolver compares the *time of the last accepted submission*.
+- **CORS handling with Node proxy**
+- **Dynamic ranking numbers** (ties handled properly)
+- **Smooth animations and transition fixes**
+- **`.env.example` included**
+- **Documentation for configuration**
+- **Keyboard controls** (Enter to resolve, Escape to cancel)
 
 ### TODO
-
-- [x] Hotfix the sorting rank //If two teams have the same score, they are sorted by the time of their last accepted submission.
-- [x] Add themes
-- [x] Fix the Cors error 
+- [ ] Theme system (Light/Dark/Custom)
 - [ ] Add preview
 - [ ] Add static version
 - [ ] Responsive design(if we deploy in backend service and share with others)
-- [x] Handle the judging types
-- [x] dynamic the reanking number
-- [x] fix the animation
-- [x] Add example of .env file
-- [x] Write little docuemnt for how this work and how to config that!
-- [ ] Handle the keyboard next controling(example n) 
 - [ ] Add document for functions in scorboard component 
 - [ ] Refactor the scoreboard component
 - [ ] Add img preview for each team to show in popup
 
-# Lets use it!
-
+## Lets use it!
 ### Install the package with bun :
 
 ```bash
@@ -58,18 +58,23 @@ copy The .env.example to .env:
 | **VITE_API_CID**      | Contest ID to pull data from. Must match the contest ID in DOMjudge.                                     |
 | **VITE_API_PENALTY**  | Penalty time (in minutes) applied per wrong submission.                                                  |
 
-<hr>
+### CORS Proxy (Recommended)
 
-Browsers block API requests to different origins (domains or ports) by default because of CORS (Cross-Origin Resource Sharing) restrictions.
-To bypass this safely during development, we use a CORS proxy server powered by cors-anywhere
+Browsers block API requests to different origins because of CORS restrictions.
+To bypass this safely during development, run the built-in Node CORS proxy:
 
-`You should use node to run the cors-proxy file then run the project`
+`node cors-proxy.js`
+
+
+Your final API URL becomes:
 ```
-node cors-proxy.js
+http://localhost:8080/https://www.domjudge.org/demoweb/api/v4/
+http://<proxy-host>/<actual-remote-api-url>
 ```
 
+Should use this inside VITE_API_BASE_URL.
 
-### If for any reason you don't want to use the proxy you can run chrome or other browser without web-security : 
+### Running Without Proxy (NOT Recommended) 
 
 For chrome :
 ```bash
