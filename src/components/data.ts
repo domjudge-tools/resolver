@@ -1,5 +1,5 @@
 import axiosInstance from "@/api/axiosInstance";
-import type {  ContestInfo ,  ScoreboardRow } from "@/types"
+import type { ContestInfo, ScoreboardRow } from "@/types";
 /** 1. Fetch contest metadata */
 export async function fetchContest(cid: string): Promise<any> {
   const { data } = await axiosInstance.get<ContestInfo>(`/contests/${cid}`);
@@ -13,9 +13,9 @@ export async function fetchContest(cid: string): Promise<any> {
  */
 export async function fetchBefore(cid: string): Promise<ScoreboardRow[]> {
   const { data } = await axiosInstance.get<ScoreboardRow[]>(
-    `/contests/${cid}/scoreboard?public=true`
-  )
-  return data
+    `/contests/${cid}/scoreboard?public=true`,
+  );
+  return data;
 }
 
 /**
@@ -25,68 +25,67 @@ export async function fetchBefore(cid: string): Promise<ScoreboardRow[]> {
  */
 export async function fetchAfter(cid: string): Promise<ScoreboardRow[]> {
   const { data } = await axiosInstance.get<ScoreboardRow[]>(
-    `/contests/${cid}/scoreboard?public=false`
-  )
-  return data
+    `/contests/${cid}/scoreboard?public=false`,
+  );
+  return data;
 }
 
 /**
  */
 export async function fetchTeams(cid: string): Promise<any> {
-  const { data } = await axiosInstance.get<any>(
-    `/contests/${cid}/teams`
-  )
-  return data
+  const { data } = await axiosInstance.get<any>(`/contests/${cid}/teams`);
+  return data;
 }
 
 /**
  */
 export async function fetchProblems(cid: string): Promise<any> {
-  const { data } = await axiosInstance.get<any>(
-    `/contests/${cid}/problems`
-  )
-  return data
+  const { data } = await axiosInstance.get<any>(`/contests/${cid}/problems`);
+  return data;
 }
 
 /**
  */
 export async function fetchSubs(cid: string): Promise<any> {
-  const { data } = await axiosInstance.get<any>(
-    `/contests/${cid}/submissions`
-  )
-  return data
+  const { data } = await axiosInstance.get<any>(`/contests/${cid}/submissions`);
+  return data;
 }
 
 /**
  */
 export async function fetchJudge(cid: string): Promise<any> {
-  const { data } = await axiosInstance.get<any>(
-    `/contests/${cid}/judgements`
-  )
-  return data
+  const { data } = await axiosInstance.get<any>(`/contests/${cid}/judgements`);
+  return data;
 }
 
 /**
  */
 export async function fetchJudgeTypes(cid: string): Promise<any> {
   const { data } = await axiosInstance.get<any>(
-    `/contests/${cid}/judgement-types`
-  )
-  return data
+    `/contests/${cid}/judgement-types`,
+  );
+  return data;
 }
-
 
 /** 🧩 Example usage in your React component or wherever */
 export async function loadContestData(cid: string) {
   const contestApi = await fetchContest(cid);
-  const beforeApi    = await fetchBefore(cid);
-  const afterApi   = await fetchAfter(cid);
-  const teamsApi   = await fetchTeams(cid);
-  const problemsApi   = await fetchProblems(cid);
-  const subsApi   = await fetchSubs(cid);
-  const judgeApi   = await fetchJudge(cid);
-  const judgeTypesApi   = await fetchJudgeTypes(cid);
+  const beforeApi = await fetchBefore(cid);
+  const afterApi = await fetchAfter(cid);
+  const teamsApi = await fetchTeams(cid);
+  const problemsApi = await fetchProblems(cid);
+  const subsApi = await fetchSubs(cid);
+  const judgeApi = await fetchJudge(cid);
+  const judgeTypesApi = await fetchJudgeTypes(cid);
 
-  return { contestApi , beforeApi, afterApi , teamsApi , problemsApi , subsApi , judgeApi , judgeTypesApi};
+  return {
+    contestApi,
+    beforeApi,
+    afterApi,
+    teamsApi,
+    problemsApi,
+    subsApi,
+    judgeApi,
+    judgeTypesApi,
+  };
 }
-

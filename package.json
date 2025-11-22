@@ -7,6 +7,7 @@
     "start": "bunx concurrently 'bun run cors' 'bun run dev'",
     "dev": "vite",
     "cors": "bun run cors-proxy.js",
+    "prettier" : "bunx prettier ./src --write",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
