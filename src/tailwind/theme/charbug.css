@@ -1,0 +1,12 @@
+@layer theme(theme-charbug) {
+  --background: #1e1e1e;
+  --foreground: #f0f0f0;
+
+  --card: #2a2a2a;
+  --card-foreground: #ffffff;
+
+  --primary: #93c5fd;
+  --primary-foreground: #1e1e1e;
+
+  /* ... */
+}

@@ -3,11 +3,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap");
 
 @import "tailwindcss";
+@import "@/tailwind/theme/charbug.css" layer(theme);
+@import "@/tailwind/theme/default.css" layer(theme);
 
 body {
   font-family: "Vazirmatn", "Ubuntu", sans-serif;
   font-size: 62%;
-  background-color: #f9f5f0;
 }
 
 .title-font {
