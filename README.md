@@ -19,11 +19,10 @@
 
 ### TODO
 
-- [ ] Handle the color of text inside the problems(make it easy to read)
+- [x] Handle the color of text inside the problems(make it easy to read)
 - [ ] Add img preview for each team to show in popup(use api from domjudge,also update the python script for add img for teams,also we need script to just update the img in teams)
 - [ ] Add static version(use domjudge shdaow and maybe use nextjs)
 - [ ] Responsive design(if we deploy in backend service and share with others)
-- [ ] Add font for persian and english
 - [ ] Theme system (Light/Dark/Custom)
 - [ ] Add preview
 - [ ] Add document for functions in scorboard component
