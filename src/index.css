@@ -33,3 +33,10 @@ body {
 .active {
   animation: blinkFocus 1.5s ease-in-out infinite;
 }
+
+
+.popup {
+    transform : translate(-50%,-50%);
+    top : 50%;
+    left : 50%;
+}

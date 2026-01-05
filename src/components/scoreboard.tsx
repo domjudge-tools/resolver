@@ -1,46 +1,14 @@
 import { useEffect, useState } from "react";
+import TeamImg from "./teamImg"
 import { AnimatePresence, motion } from "framer-motion";
-import { loadContestData } from "@/components/data.ts";
-import type { ScoreboardData, ScoreboardRow, ProblemInfo } from "../types";
+import { loadContestData } from "./data.ts";
+import type { ScoreboardData, ScoreboardRow, ProblemInfo ,ScoreboardProps } from "../types";
+import {colorBasedBg, firstSubmit} from "./utils.ts"
 
-interface ScoreboardProps {
-  contestId: string | number;
-}
+function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
 
-export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
-  const firstSolves: Record<
-    string,
-    { time: number; team_id: string | number }
-  > = {};
-
-  // Clear first_to_solve flags and find earliest solves
-  teams.forEach((team) => {
-    team.problems.forEach((problem) => {
-      problem.first_to_solve = false;
-      if (problem.solved) {
-        const prev = firstSolves[problem.problem_id];
-        if (!prev || problem.time < prev.time) {
-          firstSolves[problem.problem_id] = {
-            time: problem.time,
-            team_id: team.team_id,
-          };
-        }
-      }
-    });
-  });
-
-  // Mark FTS
-  teams.forEach((team) => {
-    team.problems.forEach((problem) => {
-      if (
-        problem.solved &&
-        firstSolves[problem.problem_id]?.team_id === team.team_id
-      ) {
-        problem.first_to_solve = true;
-      }
-    });
-  });
-
+  firstSubmit(teams)
+  
   // Sort and assign ranks
   teams.sort((a, b) => {
     if (b.score.num_solved !== a.score.num_solved)
@@ -101,6 +69,7 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
   const [judges, setJudges] = useState([]);
   const [subs, setSubs] = useState([]);
   const api_penalty = import.meta.env.VITE_API_PENALTY;
+  const [teamPopup , setTeamPopup] =  useState({state : false , id : ""})
 
   useEffect(() => {
     loadContestData(contestId)
@@ -189,16 +158,19 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
   useEffect(() => {
     const handleKeyDown = (event: any) => {
       if (event.key === "Escape") {
-        console.log("Escape key pressed");
-        setrCoolDown(false); // Call your function when Escape is pressed
-        document.querySelector(".active")?.classList.remove("active");
+          if (teamPopup.state) {
+              setTeamPopup({state : false , id :""})
+          } else {
+              setrCoolDown(false); // Call your function when Escape is pressed
+              document.querySelector(".active")?.classList.remove("active");
+          }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [setrCoolDown]);
+  }, [setrCoolDown,teamPopup]);
 
   const getCellColor = (pr: ProblemInfo, team_id: string) => {
     if (pr.num_pending > 0) return "bg-yellow";
@@ -256,7 +228,7 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
     };
   }, []);
 
-  return (
+  return (<>
     <div className="p-4 w-full backdrop-blur-sm">
       <h1 className="title-font text-indigo-700 text-4xl">
         {contestData?.name}
@@ -291,7 +263,7 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
                     className="w-full h-full text-xl font-bold text-center rounded-2xl grid place-items-center"
                     style={{ backgroundColor: problem.rgb || "#888" }}
                   >
-                    {problem.label || String.fromCharCode(65 + i)}
+                    <span style={{color : colorBasedBg(problem.rgb)}} className="">{problem.label || String.fromCharCode(65 + i)}</span>
                   </div>
                 </div>
               ))}
@@ -310,7 +282,6 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
                       duration: 1.1,
                       //ease: [0.25, 0.8, 0.25, 1], // ease-in-out
                         ease: [0.05, 0.8, 0.35, 1],
-                     //   "easyInOut": [0.15, 0.9, 0.25, 1]
                     },
                     opacity: {
                       duration: 0.3,
@@ -327,8 +298,12 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
                   <div className="font-bod grid place-items-center text-2xl">
                     {team.rank}
                   </div>
-                  <div className="flex flex-col justify-center">
-                    <span className="font-medium text-3xl">
+                  <div
+                  onClick={() => {
+                      setTeamPopup({state : true ,id : team.team_id })
+                  }}
+                  className="flex flex-col justify-center cursor-pointer hover:scale-105 transition-transform">
+                    <span  className="font-medium text-3xl">
                       {getNameTeam(team.team_id)}
                     </span>
                     <span className="text-xl min-h-[1rem] ">
@@ -398,5 +373,10 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
         </div>
       </div>
     </div>
-  );
+    <TeamImg teamPopup={teamPopup} setDefault={() => {
+        console.log("test")
+        setTeamPopup({state: false , id : ""})
+    }} />
+ </> );
+
 }

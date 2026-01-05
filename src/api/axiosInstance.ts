@@ -23,7 +23,7 @@ axiosInstance.interceptors.request.use(
     if (API_USERNAME && API_PASSWORD) {
       const credentials = btoa(`${API_USERNAME}:${API_PASSWORD}`);
       config.headers = {
-        ...config.headers,
+        ...config.headers || {},
         Authorization: `Basic ${credentials}`,
       };
     }
