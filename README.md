@@ -19,16 +19,16 @@
 
 ### TODO
 
-- [ ] Handle the color of text inside the problems(make it easy to read)
+- [x] Handle the color of text inside the problems(make it easy to read)
 - [ ] Add img preview for each team to show in popup(use api from domjudge,also update the python script for add img for teams,also we need script to just update the img in teams)
 - [ ] Add static version(use domjudge shdaow and maybe use nextjs)
 - [ ] Responsive design(if we deploy in backend service and share with others)
-- [ ] Add font for persian and english
 - [ ] Theme system (Light/Dark/Custom)
-- [ ] Add preview
+- [ ] Add preview of result 
 - [ ] Add document for functions in scorboard component
 - [ ] Refactor the scoreboard component
 - [ ] Docker!
+- [ ] New design ?! remove the header add the popup for hover in problems to show the lable of that also make the gap between items
 
 ## Lets use it!
 
@@ -51,6 +51,8 @@ npm install
 node cors-proxy.js &
 npm run dev
 ```
+
+> Keep in mind if you want to share the port of NAT use --host after bun dev or bun preview
 
 ### env file :
 
@@ -96,3 +98,17 @@ google-chrome-stable --user-data-dir="./" --disable-web-security
 ```
 
 For the firefox : About:config and the security.fileuri.strict_origin_policy. Sometimes also the network.http.refere.XOriginPolicy. Im not sure:))
+
+
+
+### Doc
+The resolver it self dosen't any really hard method ,Just get the data from domjudge with api and sort the teams
+For each resolv the of any submit update the teams and rendere the new array of teams with nice animation ,And yse that's the magic
+These days im trying to seprate the functions of scoreboard component ,Because a little bit feel heavy
+
+
+
+
+so until here:
+    I working on popup img show in page but i have problem with unmounting the page and showing some notif!
+

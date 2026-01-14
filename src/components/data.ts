@@ -67,7 +67,17 @@ export async function fetchJudgeTypes(cid: string): Promise<any> {
   return data;
 }
 
-/** 🧩 Example usage in your React component or wherever */
+/**
+ */
+export async function fetchTeamImg(teamId: string): Promise<any> {
+     const  { data  } = await axiosInstance.get<any>(
+    `/teams/${teamId}/photo`,
+  { responseType: "blob" }
+  )
+
+  return data;
+}
+
 export async function loadContestData(cid: string) {
   const contestApi = await fetchContest(cid);
   const beforeApi = await fetchBefore(cid);

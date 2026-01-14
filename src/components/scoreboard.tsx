@@ -1,46 +1,14 @@
 import { useEffect, useState } from "react";
+import TeamImg from "./teamImg"
 import { AnimatePresence, motion } from "framer-motion";
-import { loadContestData } from "@/components/data.ts";
-import type { ScoreboardData, ScoreboardRow, ProblemInfo } from "../types";
+import { loadContestData } from "./data.ts";
+import type { ScoreboardData, ScoreboardRow, ProblemInfo ,ScoreboardProps } from "../types";
+import {colorBasedBg, firstSubmit} from "./utils.ts"
 
-interface ScoreboardProps {
-  contestId: string | number;
-}
+function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
 
-export function sortAndRankTeams(teams: ScoreboardRow[]): ScoreboardRow[] {
-  const firstSolves: Record<
-    string,
-    { time: number; team_id: string | number }
-  > = {};
-
-  // Clear first_to_solve flags and find earliest solves
-  teams.forEach((team) => {
-    team.problems.forEach((problem) => {
-      problem.first_to_solve = false;
-      if (problem.solved) {
-        const prev = firstSolves[problem.problem_id];
-        if (!prev || problem.time < prev.time) {
-          firstSolves[problem.problem_id] = {
-            time: problem.time,
-            team_id: team.team_id,
-          };
-        }
-      }
-    });
-  });
-
-  // Mark FTS
-  teams.forEach((team) => {
-    team.problems.forEach((problem) => {
-      if (
-        problem.solved &&
-        firstSolves[problem.problem_id]?.team_id === team.team_id
-      ) {
-        problem.first_to_solve = true;
-      }
-    });
-  });
-
+  firstSubmit(teams)
+  
   // Sort and assign ranks
   teams.sort((a, b) => {
     if (b.score.num_solved !== a.score.num_solved)
@@ -101,6 +69,7 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
   const [judges, setJudges] = useState([]);
   const [subs, setSubs] = useState([]);
   const api_penalty = import.meta.env.VITE_API_PENALTY;
+  const [teamPopup , setTeamPopup] =  useState({state : false , id : ""})
 
   useEffect(() => {
     loadContestData(contestId)
@@ -189,21 +158,24 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
   useEffect(() => {
     const handleKeyDown = (event: any) => {
       if (event.key === "Escape") {
-        console.log("Escape key pressed");
-        setrCoolDown(false); // Call your function when Escape is pressed
-        document.querySelector(".active")?.classList.remove("active");
+          if (teamPopup.state) {
+              setTeamPopup({state : false , id :""})
+          } else {
+              setrCoolDown(false); // Call your function when Escape is pressed
+              document.querySelector(".active")?.classList.remove("active");
+          }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [setrCoolDown]);
+  }, [setrCoolDown,teamPopup]);
 
   const getCellColor = (pr: ProblemInfo, team_id: string) => {
-    if (pr.num_pending > 0) return "bg-yellow-300";
-    if (pr.solved) return "bg-green-300";
-    if (pr.num_judged > 0) return "bg-red-400";
+    if (pr.num_pending > 0) return "bg-yellow";
+    if (pr.solved) return "bg-green";
+    if (pr.num_judged > 0) return "bg-red";
 
     // Handle special case: team had a pending submission in the previous state,
     // but now the judged result has no penalty (e.g., compile error, too late submission, etc.).
@@ -247,9 +219,6 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
         const pendings = document.getElementsByClassName("cursor-pointer");
         if (!pendings) return;
         const lastPend = pendings[pendings.length - 1];
-        lastPend?.scrollIntoView({
-          behavior: "smooth",
-        });
         lastPend?.click();
       }
     }
@@ -259,14 +228,14 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
     };
   }, []);
 
-  return (
-    <div className="p-4 w-full">
+  return (<>
+    <div className="p-4 w-full backdrop-blur-sm">
       <h1 className="title-font text-indigo-700 text-4xl">
         {contestData?.name}
       </h1>
-      <div className="overflow-auto shadow-lg shadow-slate-200 rounded-lg">
+      <div className="overflow-auto shadow-xl rounded-2xl">
         <div className="min-w-[1024px]">
-          <div className="grid shadow-sm grid-cols-[50px_25rem_10rem_1fr_5rem] min-h-10 place-items-stretch gap-2 px-2 text-lg font-bold bg-gray-100 text-slate-700">
+          <div className="grid grid-cols-[50px_25rem_10rem_1fr_5rem] min-h-10 place-items-stretch gap-2 px-2 text-lg font-bold bg-card-foreground/10 text-primary">
             <div className="text-start grid place-items-center">RANK</div>
             <div className="text-start flex justify-center items-center">
               TEAM
@@ -283,7 +252,7 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
               style={{
                 gridTemplateColumns: `repeat(${problems?.length || 4}, 1fr)`,
               }}
-              className="grid  text-white gap-3 justify-center min-w-[30px]"
+              className="grid text-white gap-3 justify-center min-w-[30px]"
             >
               {problems?.map((problem: any, i: number) => (
                 <div
@@ -291,10 +260,10 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
                   className="relative flex justify-center items-center"
                 >
                   <div
-                    className="w-full h-full text-slate-900 text-xl font-bold text-center rounded-lg grid place-items-center"
+                    className="w-full h-full text-xl font-bold text-center rounded-2xl grid place-items-center"
                     style={{ backgroundColor: problem.rgb || "#888" }}
                   >
-                    {problem.label || String.fromCharCode(65 + i)}
+                    <span style={{color : colorBasedBg(problem.rgb)}} className="">{problem.label || String.fromCharCode(65 + i)}</span>
                   </div>
                 </div>
               ))}
@@ -311,32 +280,37 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
                   transition={{
                     layout: {
                       duration: 1.1,
-                      ease: [0.25, 0.8, 0.25, 1], // ease-in-out
+                      //ease: [0.25, 0.8, 0.25, 1], // ease-in-out
+                        ease: [0.05, 0.8, 0.35, 1],
                     },
                     opacity: {
                       duration: 0.3,
                     },
                   }}
                   key={team.team_id}
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
+                  exit={{ opacity: 0, y: -5 }}
                   style={{ zIndex: result.length - index }}
-                  className={`team-${team.team_id} bg-white border-b-2 border-gray-100 gap-2
-                    [&:has(&>*.active)]:z-50 relative grid px-2 py-1 justify-center grid-cols-[50px_25rem_10rem_1fr_5rem]`}
+                  className={`team-${team.team_id} bg-card has-[.active]:bg-card/10 card text-foreground not-last:border-b border-border/30  gap-2
+                     relative grid px-2 py-2 justify-center grid-cols-[50px_25rem_10rem_1fr_5rem]`}
                 >
                   <div className="font-bod grid place-items-center text-2xl">
                     {team.rank}
                   </div>
-                  <div className="flex flex-col justify-center">
-                    <span className="font-bold text-3xl">
+                  <div
+                  onClick={() => {
+                      setTeamPopup({state : true ,id : team.team_id })
+                  }}
+                  className="flex flex-col justify-center cursor-pointer hover:scale-105 transition-transform">
+                    <span  className="font-medium text-3xl">
                       {getNameTeam(team.team_id)}
                     </span>
-                    <span className="text-xl min-h-[1rem] text-gray-500 font-bold">
+                    <span className="text-xl min-h-[1rem] ">
                       {getUniTeam(team.team_id)}
                     </span>
                   </div>
-                  <div className="text-center text-xl self-center font-bold">
+                  <div className="text-center text-xl self-center font-medium">
                     <span className="text-teal-900">
                       {team.score.num_solved}
                     </span>{" "}
@@ -366,7 +340,7 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
                           });
                         }}
                         id={`team-${team.team_id}-${pr.problem_id}`}
-                        className={`relative grid py-3 place-items-center rounded-lg text-center cell font-bold text-2xl ${pr.num_pending > 0 ? "cursor-pointer" : ""} transition-all rounded ${getCellColor(pr, team.team_id)} p-1 ${pr.first_to_solve ? "bg-green-800 text-white" : ""}`}
+                        className={`relative grid py-3 place-items-center rounded-2xl text-center cell font-bold text-2xl ${pr.num_pending > 0 ? "cursor-pointer" : ""} transition-all ${getCellColor(pr, team.team_id)} p-1 ${pr.first_to_solve ? "bg-green-800 text-white" : ""}`}
                       >
                         {pr.solved ? `${pr.time}` : ""}
                         {pr.first_to_solve && (
@@ -399,5 +373,10 @@ export default function Scoreboard({ contestId }: ScoreboardProps) {
         </div>
       </div>
     </div>
-  );
+    <TeamImg teamPopup={teamPopup} setDefault={() => {
+        console.log("test")
+        setTeamPopup({state: false , id : ""})
+    }} />
+ </> );
+
 }

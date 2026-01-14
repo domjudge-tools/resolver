@@ -42,3 +42,6 @@ export interface ScoreboardData {
   contest: ContestInfo;
   rows: ScoreboardRow[];
 }
+export interface ScoreboardProps {
+  contestId: string | number;
+}
